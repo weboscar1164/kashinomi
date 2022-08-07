@@ -1,35 +1,59 @@
-// 各モジュールの読み込み
-const gulp = require('gulp');
-const sass = require('gulp-sass');
-sass.compiler = require("dart-sass"); // sassのコンパイルにdart-sassを使用する
-const rename = require('gulp-rename');
-const autoprefixer = require("gulp-autoprefixer");
+const { src, dest, watch, series, parallel } = require("gulp");
+const sass = require("gulp-sass")(require("sass"));
+const plumber = require("gulp-plumber");
+const notify = require("gulp-notify");
+const postcss = require("gulp-postcss");
+const autoprefixer = require("autoprefixer");
+const cssdeclsort = require("css-declaration-sorter");
+const gcmq = require("gulp-group-css-media-queries");
+const mode = require("gulp-mode")();
+const browserSync = require("browser-sync");
 
-// sassコンパイルの設定
-function sassCompile(){
-  return (
-    gulp 
-      // 読み込みファイルをセット
-      .src('sass/style.scss')
-      // コンパイルの実行
-      .pipe(sass())
-      // 書き出すファイル名を指定
-      .pipe(rename('style.css'))
-      // 指定した場所にcssを書き出し
-      .pipe(gulp.dest('css'))
-      //gulp-autoprefixer設定
-      .pipe(autoprefixer({
-          cascade: false,
-          grid: true
-		}))
-  )
-}
-// "sassCompile"として使用する
-exports.sassCompile = sassCompile;
+const compileSass = (done) => {
+	const postcssPlugins = [
+		autoprefixer({
+			grid: "autoplace",
+			cascade: false,
+		}),
+		cssdeclsort({ order: "alphabetical" }),
+	];
+	src("./src/scss/**/*.scss", { sourcemaps: true })
+		.pipe(
+			plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
+		)
+		.pipe(sass({ outputStyle: "expanded" }))
+		.pipe(postcss(postcssPlugins))
+		.pipe(mode.production(gcmq()))
+		.pipe(dest("./dist/css", { sourcemaps: "./sourcemaps" }));
+	done();
+};
 
-function watch(){
-  gulp.watch('sass',sassCompile);
-}
+const buildServer = (done) => {
+	browserSync.init({
+		port: 8080,
+		// 静的サイト
+		server: { baseDir: "./" },
+		// 動的サイト
+		// files: ["./**/*.php"],
+		// proxy: "http://localsite.local/",
+		open: true,
+		watchOptions: {
+			debounceDelay: 1000,
+		},
+	});
+	done();
+};
 
-// "npx gulp"でwatchを実行する
-exports.default = watch;
+const browserReload = (done) => {
+	browserSync.reload();
+	done();
+};
+
+const watchFiles = () => {
+	watch("./src/scss/**/*.scss", series(compileSass, browserReload));
+};
+
+module.exports = {
+	sass: compileSass,
+	default: parallel(buildServer, watchFiles),
+};
