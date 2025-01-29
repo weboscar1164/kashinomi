@@ -378,7 +378,7 @@ a {
   height: 100%;
   background: rgba(0, 0, 0, 0.3);
 }
-.mainvisual_bg2, .mainvisual_bg3, .mainvisual_bg4 {
+.mainvisual_bg2, .mainvisual_bg3, .mainvisual_bg4, .mainvisual_bg5  {
   display: none;
 }
 .mainvisual_bg1 {
@@ -392,6 +392,9 @@ a {
 }
 .mainvisual_bg4 {
   background: url(../img/mv4.jpg) no-repeat center/cover;
+}
+.mainvisual_bg5 {
+  background: url(../img/mv5.jpg) no-repeat center/cover;
 }
 .mainvisual_img {
   position: absolute;

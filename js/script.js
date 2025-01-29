@@ -1,102 +1,108 @@
 //scrollhint使用
-new ScrollHint('.jsScrollable', {
-    scrollHintIconAppendClass: 'scroll-hint-icon-black', // white-icon will appear
-    applyToParents: true,
-    i18n: {
-      scrollable: 'スクロールできます'
-    }
+new ScrollHint(".jsScrollable", {
+	scrollHintIconAppendClass: "scroll-hint-icon-black", // white-icon will appear
+	applyToParents: true,
+	i18n: {
+		scrollable: "スクロールできます",
+	},
 });
-
 
 //AOS使用
 AOS.init();
 
 //mainvisual
-var sld = '.sld', //スライドにclass付与
-sldPre = 'sld', //スライドのidにナンバリングして付与
-sldTime = 2000, //fadein / outの時間
-sldWait = 5000; //スライド切り替え時間
+var sld = ".sld", //スライドにclass付与
+	sldPre = "sld", //スライドのidにナンバリングして付与
+	sldTime = 2000, //fadein / outの時間
+	sldWait = 5000; //スライド切り替え時間
 
-$(window).on('load', function () {  
-//最初のスライドを直ちに表示
-var sldNum = 1;
-$('#sld1').addClass('zoomImg');
+$(window).on("load", function () {
+	//最初のスライドを直ちに表示
+	var sldNum = 1;
+	$("#sld1").addClass("zoomImg");
 
-//スライド切り替え時間を設定して繰り返し
-//cssで.zoomImg作成
-setInterval(() => {
-    $(sld).not(`#${sldPre}${sldNum}`).fadeOut(sldTime);
-    $(`#${sldPre}${sldNum}`).removeClass('zoomImg');
-    $(`#${sldPre}${sldNum}`).fadeIn(sldTime);
-    $(`#${sldPre}${sldNum}`).addClass('zoomImg');
+	//スライド切り替え時間を設定して繰り返し
+	//cssで.zoomImg作成
+	setInterval(() => {
+		//現在のスライドを取得
+		const currentSlide = $(`${sld}`).eq(sldNum - 1);
 
-    sldNum++;
-    if (sldNum > $(sld).length) {
-        sldNum = 1;
-    }
-}, sldWait);
+		// 現在のスライド以外をフェードアウト
+		$(sld).not(currentSlide).fadeOut(sldTime);
+
+		// 現在のスライドを表示、アクティブ化
+		currentSlide.removeClass("zoomImg");
+		currentSlide.fadeIn(sldTime);
+		currentSlide.addClass("zoomImg");
+
+		// スライド番号を更新
+		sldNum = (sldNum % $(sld).length) + 1;
+	}, sldWait);
 });
 
 //header_nav_sp操作
-const headerNav = $('.header_nav_sp'),
-    navSlider = $('.header_nav_sp_slider'),
-    navToggle = $('.header_nav_sp_toggle');
+const headerNav = $(".header_nav_sp"),
+	navSlider = $(".header_nav_sp_slider"),
+	navToggle = $(".header_nav_sp_toggle");
 
-navToggle.on('click', event => {
-    if ($(event.currentTarget).hasClass('header_nav_sp_toggle-active')) {
-        navToggle.removeClass('header_nav_sp_toggle-active');
-        navSlider.removeClass('header_nav_sp_slider-active');
-    } else {
-        navToggle.addClass('header_nav_sp_toggle-active');
-        navSlider.addClass('header_nav_sp_slider-active');
-    }
+navToggle.on("click", (event) => {
+	if ($(event.currentTarget).hasClass("header_nav_sp_toggle-active")) {
+		navToggle.removeClass("header_nav_sp_toggle-active");
+		navSlider.removeClass("header_nav_sp_slider-active");
+	} else {
+		navToggle.addClass("header_nav_sp_toggle-active");
+		navSlider.addClass("header_nav_sp_slider-active");
+	}
 });
 
-
 //totop操作
-const totop = $('.totop');
+const totop = $(".totop");
 ////クリック時の操作
-totop.on('click', () => {
-    $('html,body').animate({
-        'scrollTop': 0
-    }, 1000);
+totop.on("click", () => {
+	$("html,body").animate(
+		{
+			scrollTop: 0,
+		},
+		1000
+	);
 });
 ////ページ上部では隠す
 totop.hide();
-$(window).on('scroll', event => {
-    if ($(event.currentTarget).scrollTop() > 100) {
-        totop.fadeIn();
-    } else {
-        totop.fadeOut();
-    }
+$(window).on("scroll", (event) => {
+	if ($(event.currentTarget).scrollTop() > 100) {
+		totop.fadeIn();
+	} else {
+		totop.fadeOut();
+	}
 });
 
-
 //ナビゲーション操作
-const navBtn = $('.jsNavBtn');
-var topMargin
+const navBtn = $(".jsNavBtn");
+var topMargin;
 
 ////headerのサイズによってスクロールトップを変更
-$(window).on('load resize', event=> {
-    if ($(event.currentTarget).width() < 992) {
-        topMargin = 60;
-    } else {
-        topMargin = 80;
-    };
+$(window).on("load resize", (event) => {
+	if ($(event.currentTarget).width() < 992) {
+		topMargin = 60;
+	} else {
+		topMargin = 80;
+	}
 });
 
 ////リンククリックによってスムーススクロール
-navBtn.on('click', event => {
-    thisId = $(event.currentTarget).attr('href');
-    position = $(thisId).offset().top;
-    $('html, body').animate({
-        'scrollTop': position - topMargin
-    }, 1000);
+navBtn.on("click", (event) => {
+	thisId = $(event.currentTarget).attr("href");
+	position = $(thisId).offset().top;
+	$("html, body").animate(
+		{
+			scrollTop: position - topMargin,
+		},
+		1000
+	);
 
-    ////(SPの場合)スクロール後にスライダーを閉じる
-    setTimeout(function(){
-        navToggle.removeClass('header_nav_sp_toggle-active');
-        navSlider.removeClass('header_nav_sp_slider-active');
-    }, 1000);
+	////(SPの場合)スクロール後にスライダーを閉じる
+	setTimeout(function () {
+		navToggle.removeClass("header_nav_sp_toggle-active");
+		navSlider.removeClass("header_nav_sp_slider-active");
+	}, 1000);
 });
-
