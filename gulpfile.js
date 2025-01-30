@@ -9,7 +9,7 @@ const gcmq = require("gulp-group-css-media-queries");
 const mode = require("gulp-mode")();
 const browserSync = require("browser-sync");
 
-const compileSass = (done) => {
+const compileSass = () => {
 	const postcssPlugins = [
 		autoprefixer({
 			grid: "autoplace",
@@ -17,15 +17,15 @@ const compileSass = (done) => {
 		}),
 		cssdeclsort({ order: "alphabetical" }),
 	];
-	src("./src/scss/**/*.scss", { sourcemaps: true })
+	return src("./sass/**/*.scss", { sourcemaps: true })
 		.pipe(
 			plumber({ errorHandler: notify.onError("Error: <%= error.message %>") })
 		)
 		.pipe(sass({ outputStyle: "expanded" }))
 		.pipe(postcss(postcssPlugins))
 		.pipe(mode.production(gcmq()))
-		.pipe(dest("./dist/css", { sourcemaps: "./sourcemaps" }));
-	done();
+		.pipe(dest("./css", { sourcemaps: "./sourcemaps" }))
+		.pipe(browserSync.stream());
 };
 
 const buildServer = (done) => {
@@ -44,13 +44,9 @@ const buildServer = (done) => {
 	done();
 };
 
-const browserReload = (done) => {
-	browserSync.reload();
-	done();
-};
-
 const watchFiles = () => {
-	watch("./src/scss/**/*.scss", series(compileSass, browserReload));
+	watch("./sass/**/*.scss", series(compileSass));
+	watch("./index.html").on("change", browserSync.reload);
 };
 
 module.exports = {
