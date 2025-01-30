@@ -347,7 +347,8 @@ a {
     display: none;
   }
   .header_link_phone_pc {
-    display: block;
+    display: flex;
+    align-items: center;
   }
   .header_link_phone_pc > p {
     color: #fff;
