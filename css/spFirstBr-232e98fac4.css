@@ -1,0 +1,26 @@
+@media (min-width: 576px) {
+  .br_sm {
+    display: none;
+  }
+}
+@media (min-width: 768px) {
+  .br_md {
+    display: none;
+  }
+}
+@media (min-width: 992px) {
+  .br_lg {
+    display: none;
+  }
+}
+@media (min-width: 1200px) {
+  .br_xl {
+    display: none;
+  }
+}
+@media (min-width: 1400px) {
+  .br_xxl {
+    display: none;
+  }
+}
+/*# sourceMappingURL=sourcemaps/spFirstBr-232e98fac4.css.map */
